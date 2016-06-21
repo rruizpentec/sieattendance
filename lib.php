@@ -34,11 +34,14 @@ function block_sieattendance_print_attendance_table($courseid, $date) {
     global $CFG, $DB;
     $table = '';
     $context = context_course::instance($courseid);
-    $query = "SELECT u.id AS id, u.lastname, u.firstname, att.id AS attid
+    $query = "SELECT u.id AS id, u.lastname, u.firstname, att.id AS attid,
+                     (SELECT COUNT(DISTINCT(timedate)) as count 
+                        FROM {sieattendance} useratt
+                       WHERE useratt.courseid = att.courseid AND u.id = useratt.userid) as studentattcount
                 FROM {role_assignments} a, {user} u
-           LEFT JOIN {sieattendance} att ON att.userid = u.id AND att.courseid = {$courseid}
-                     AND att.timedate = {$date}
-               WHERE contextid = {$context->id}
+           LEFT JOIN {sieattendance} att ON att.userid = u.id AND att.courseid = :courseid
+                     AND att.timedate = :date
+               WHERE contextid = :contextid
                      AND roleid = 5
                      AND a.userid = u.id
                ORDER BY lastname, firstname";
@@ -48,16 +51,11 @@ function block_sieattendance_print_attendance_table($courseid, $date) {
     $table .= html_writer::start_tag('th').get_string('attended', 'block_sieattendance').html_writer::end_tag('th');
     $table .= html_writer::start_tag('th').get_string('attendancepercentage', 'block_sieattendance').html_writer::end_tag('th');
     $table .= html_writer::end_tag('tr');
-    $rows = $DB->get_recordset_sql($query);
+    $params = array('timedate' => $date, 'contextid' => $context->id, 'courseid' => $courseid);
+    $rows = $DB->get_recordset_sql($query, $params);
     $totalattendances = $DB->count_records_select('sieattendance', 'courseid = :courseid',
             array('courseid' => $courseid), 'COUNT(DISTINCT(timedate)) as count');
     foreach ($rows as $row) {
-        $studentattcount = $DB->count_records_select('sieattendance', 'courseid = :courseid AND userid = :userid',
-                array(
-                    'courseid' => $courseid,
-                    'userid'   => $row->id
-                ), 'COUNT(DISTINCT(timedate)) as count'
-        );
         if ($row->attid == '') {
             $statusimgurl = $CFG->wwwroot.'/blocks/sieattendance/pix/fail.png';
             $value = 'fail';
@@ -65,7 +63,8 @@ function block_sieattendance_print_attendance_table($courseid, $date) {
             $statusimgurl = $CFG->wwwroot.'/blocks/sieattendance/pix/ok.png';
             $value = 'ok';
         }
-
+        $studentattcount = $row->$studentattcount;
+        
         $percentage = 0.0 + (($studentattcount * 100) / $totalattendances);
         $table .= html_writer::start_tag('tr');
         $fullname = $row->lastname.', '.$row->firstname;
@@ -476,7 +475,7 @@ function block_sieattendance_update_attendance_users_grades($courseid, $gradeite
                          AND c.id = :courseid
                    ORDER by lastname, firstname";
         $params = array('courseid' => $courseid);
-        $users = $DB->get_recordset_sql($query, $params);        
+        $users = $DB->get_recordset_sql($query, $params);
         $totalattendance = $DB->count_records_select('sieattendance', 'courseid = :courseid', $params, 'COUNT(DISTINCT(timedate))');
         foreach ($users as $user) {
             $studentattendance = $user->studentattendance;
