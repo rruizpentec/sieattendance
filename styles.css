@@ -1,0 +1,8 @@
+.block_sieattendance_toggleUserAttendance {
+    cursor: pointer;
+}
+
+.block_sieattendance_button {
+    width: 93%;
+    margin-bottom: 5px !important;
+}
