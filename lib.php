@@ -52,11 +52,12 @@ function block_sieattendance_print_attendance_table($courseid, $date) {
     $totalattendances = $DB->count_records_select('sieattendance', 'courseid = :courseid',
             array('courseid' => $courseid), 'COUNT(DISTINCT(timedate)) as count');
     foreach ($rows as $row) {
-        $studentattendancecount = $DB->count_records_select('sieattendance', 'courseid = :courseid AND userid = :userid',
+        $studentattcount = $DB->count_records_select('sieattendance', 'courseid = :courseid AND userid = :userid',
                 array(
                     'courseid' => $courseid,
-                    'userid'   => $row->id),
-                    'COUNT(DISTINCT(timedate)) as count');
+                    'userid'   => $row->id
+                ), 'COUNT(DISTINCT(timedate)) as count'
+        );
         if ($row->attid == '') {
             $statusimgurl = $CFG->wwwroot.'/blocks/sieattendance/pix/fail.png';
             $value = 'fail';
@@ -65,7 +66,7 @@ function block_sieattendance_print_attendance_table($courseid, $date) {
             $value = 'ok';
         }
 
-        $percentage = 0.0 + (($studentattendancecount * 100) / $totalattendances);
+        $percentage = 0.0 + (($studentattcount * 100) / $totalattendances);
         $table .= html_writer::start_tag('tr');
         $fullname = $row->lastname.', '.$row->firstname;
         $table .= html_writer::start_tag('td');
@@ -83,7 +84,7 @@ function block_sieattendance_print_attendance_table($courseid, $date) {
         $table .= html_writer::end_tag('td');
         $table .= html_writer::start_tag('td', array('id' => 'userAttendancePercentage'.$row->id));
         $table .= html_writer::empty_tag('input',
-                array('type' => 'hidden', 'id' => 'studentAttendance'.$row->id, 'value' => $studentattendancecount));
+                array('type' => 'hidden', 'id' => 'studentAttendance'.$row->id, 'value' => $studentattcount));
         $table .= html_writer::tag('span', number_format($percentage, 2).' %',
                 array('id' => 'percentage'.$row->id));
         $table .= html_writer::end_tag('td');
@@ -114,11 +115,11 @@ function block_sieattendance_print_attendance_table_by_user($courseid, $userid) 
         $table .= html_writer::end_tag('tr');
         foreach ($results as $date) {
             $table .= html_writer::start_tag('tr');
-            $linktodateattendances = $CFG->wwwroot.'/blocks/sieattendance/showattendances.php?courseid='.
+            $linktodateatt = $CFG->wwwroot.'/blocks/sieattendance/showattendances.php?courseid='.
                     $courseid.'&date='.$date->timedate;
             $table .= html_writer::start_tag('td');
             $table .= html_writer::tag('a', block_sieattendance_format_int_timedate($date->timedate),
-                    array('href' => $linktodateattendances));
+                    array('href' => $linktodateatt));
             $table .= html_writer::end_tag('td');
             $table .= html_writer::end_tag('tr');
         }
@@ -182,10 +183,10 @@ function block_sieattendance_require_javascript() {
  * @param string String of language file
  * @return string role name
  */
-function block_sieattendance_get_course_rolename($roleid, $courseid, $defaulttranslationname) {
+function block_sieattendance_get_course_rolename($roleid, $courseid, $defaulttransname) {
     global $DB;
     $sesvarname = 'block_sieattendance_course'.$courseid.'_rolename_'.$roleid;
-    if (!isset($_SESSION[$sesvarname])) {
+    if (!isset($_COOKIES[$sesvarname])) {
         $query = "SELECT RN.roleid AS roleid, RN.name AS rolename
                     FROM {course} C
               INNER JOIN {context} CX ON C.id = CX.instanceid AND CX.contextlevel = '50'
@@ -198,12 +199,12 @@ function block_sieattendance_get_course_rolename($roleid, $courseid, $defaulttra
                 GROUP BY R.id";
         $roles = $DB->get_record_sql($query, null);
         if ($roles) {
-            $_SESSION[$sesvarname] = $roles->rolename;
+            $_COOKIES[$sesvarname] = $roles->rolename;
         } else {
-            $_SESSION[$sesvarname] = get_string($defaulttranslationname, 'block_sieattendance');
+            $_COOKIES[$sesvarname] = get_string($defaulttransname, 'block_sieattendance');
         }
     }
-    return $_SESSION[$sesvarname];
+    return $_COOKIES[$sesvarname];
 }
 
 /**
@@ -374,7 +375,7 @@ function block_sieattendance_add_attendance_grade_item($courseid) {
  */
 function block_sieattendance_get_attendance_grade_item($courseid) {
     global $DB;
-    $gradecategory = block_sieattendance_get_course_grade_category($courseid);
+    // TEST $gradecategory = block_sieattendance_get_course_grade_category($courseid);.
     $gradebookitem = $DB->get_record('grade_items', array(
         'courseid' => $courseid,
         'itemname' => BLOCK_SIEATTENDANCE_GRADEBOOK_ITEM_NAME));

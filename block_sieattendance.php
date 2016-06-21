@@ -55,7 +55,7 @@ class block_sieattendance extends block_base {
      * @return string
      */
     public function get_content() {
-        global $CFG, $OUTPUT, $COURSE, $DB, $PAGE, $USER;
+        global $CFG, $COURSE, $DB, $PAGE, $USER;
         $coursecontext = context_course::instance($COURSE->id);
         if (!has_capability('block/sieattendance:roll', $coursecontext, $USER, true)) {
             return null;
@@ -76,7 +76,8 @@ class block_sieattendance extends block_base {
                 $this->content->text = html_writer::tag('a', get_string('gobacktocourse', 'block_sieattendance'),
                         array(
                             'href' => $CFG->wwwroot."/course/view.php?id=$courseid",
-                            'class' => 'btn btn-default block_sieattendance_button'));
+                            'class' => 'btn btn-default block_sieattendance_button')
+                );
                 $this->content->text .= self::get_show_attendances_buttons($courseid);
             } else {
                 $this->content->text = get_string('accesstocoursemessage', 'block_sieattendance');
@@ -114,11 +115,13 @@ class block_sieattendance extends block_base {
         $result = html_writer::tag('a', get_string('showallattendance', 'block_sieattendance'),
                 array(
                     'href'  => $CFG->wwwroot.'/blocks/sieattendance/showattendances.php?courseid='.$courseid,
-                    'class' => 'btn btn-default block_sieattendance_button'));
+                    'class' => 'btn btn-default block_sieattendance_button')
+        );
         $result .= html_writer::tag('a', get_string('addtogradebook', 'block_sieattendance'),
                 array(
                     'href'  => $CFG->wwwroot.'/blocks/sieattendance/addtogradebook.php?courseid='.$courseid,
-                    'class' => 'btn btn-default block_sieattendance_button'));
+                    'class' => 'btn btn-default block_sieattendance_button')
+        );
         return $result;
     }
 

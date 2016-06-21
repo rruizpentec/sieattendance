@@ -24,7 +24,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->version = 2016040700;  // YYYYMMDDHH (year, month, day, 24-hr time).
-$plugin->requires = 2015051100; // YYYYMMDDHH (This is the release version for Moodle 2.9).
+$plugin->requires = 2015050500; // YYYYMMDDHH (I tried with 2015110900 for 2.9.3 but doesn't work).
+                                // Default plugins has 2015050500 after installation.
 $plugin->release = 'v1.0-r1';
 $plugin->component = 'block_sieattendance';
 $plugin->maturity = MATURITY_STABLE;
