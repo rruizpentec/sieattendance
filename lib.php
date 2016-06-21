@@ -72,7 +72,8 @@ function block_sieattendance_print_attendance_table($courseid, $date) {
         $table .= html_writer::start_tag('td');
         $table .= html_writer::tag('a', $fullname,
                 array('href' => $CFG->wwwroot.'/blocks/sieattendance/showattendances.php?courseid='.
-                        $courseid.'&userid='.$row->id.'&fullname='.$fullname));
+                        $courseid.'&userid='.$row->id.'&fullname='.$fullname)
+        );
         $table .= html_writer::end_tag('td');
         $table .= html_writer::start_tag('td');
         $table .= html_writer::empty_tag('img',
@@ -80,19 +81,22 @@ function block_sieattendance_print_attendance_table($courseid, $date) {
                     'class'   => 'block_sieattendance_toggleUserAttendance',
                     'onclick' => "block_sieattendance_toggle_user_attendance(".$courseid.",".$row->id.",".$date.")",
                     'value'   => $value,
-                    'src'     => $statusimgurl));
+                    'src'     => $statusimgurl)
+        );
         $table .= html_writer::end_tag('td');
         $table .= html_writer::start_tag('td', array('id' => 'userAttendancePercentage'.$row->id));
         $table .= html_writer::empty_tag('input',
                 array('type' => 'hidden', 'id' => 'studentAttendance'.$row->id, 'value' => $studentattcount));
         $table .= html_writer::tag('span', number_format($percentage, 2).' %',
-                array('id' => 'percentage'.$row->id));
+                array('id' => 'percentage'.$row->id)
+        );
         $table .= html_writer::end_tag('td');
         $table .= html_writer::end_tag('tr');
     }
     $table .= html_writer::end_tag('table');
     $table .= html_writer::empty_tag('input',
-            array('type' => 'hidden', 'id' => 'courseCountAttendance', 'value' => $totalattendances));
+            array('type' => 'hidden', 'id' => 'courseCountAttendance', 'value' => $totalattendances)
+    );
     return $table;
 }
 
@@ -186,7 +190,7 @@ function block_sieattendance_require_javascript() {
 function block_sieattendance_get_course_rolename($roleid, $courseid, $defaulttransname) {
     global $DB;
     $sesvarname = 'block_sieattendance_course'.$courseid.'_rolename_'.$roleid;
-    if (!isset($_COOKIES[$sesvarname])) {
+    if (!isset($_COOKIE[$sesvarname])) {
         $query = "SELECT RN.roleid AS roleid, RN.name AS rolename
                     FROM {course} C
               INNER JOIN {context} CX ON C.id = CX.instanceid AND CX.contextlevel = '50'
@@ -199,12 +203,12 @@ function block_sieattendance_get_course_rolename($roleid, $courseid, $defaulttra
                 GROUP BY R.id";
         $roles = $DB->get_record_sql($query, null);
         if ($roles) {
-            $_COOKIES[$sesvarname] = $roles->rolename;
+            $_COOKIE[$sesvarname] = $roles->rolename;
         } else {
-            $_COOKIES[$sesvarname] = get_string($defaulttransname, 'block_sieattendance');
+            $_COOKIE[$sesvarname] = get_string($defaulttransname, 'block_sieattendance');
         }
     }
-    return $_COOKIES[$sesvarname];
+    return $_COOKIE[$sesvarname];
 }
 
 /**
