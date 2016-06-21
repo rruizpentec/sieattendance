@@ -27,7 +27,7 @@ function block_sieattendance_update_user_attendance_data(aluid, status, incremen
  * @param attdate Attendance date
  */
 function block_sieattendance_toggle_sie_user_attendance(action, courseid, aluid, attdate) {
-    $.ajax({
+    jQuery.ajax({
         url: M.cfg.wwwroot + '/blocks/sieattendance/requests.php',
         type: 'POST',
         async: true,

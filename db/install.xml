@@ -15,7 +15,7 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="UNIQUE" UNIQUE="true" FIELDS="courseid, userid, timedate"/>
+        <INDEX NAME="idx_sieattendance" UNIQUE="true" FIELDS="courseid, userid, timedate"/>
       </INDEXES>
     </TABLE>
   </TABLES>
