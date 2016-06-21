@@ -86,7 +86,8 @@ function block_sieattendance_print_attendance_table($courseid, $date) {
         $table .= html_writer::end_tag('td');
         $table .= html_writer::start_tag('td', array('id' => 'userAttendancePercentage'.$row->id));
         $table .= html_writer::empty_tag('input',
-                array('type' => 'hidden', 'id' => 'studentAttendance'.$row->id, 'value' => $studentattcount));
+                array('type' => 'hidden', 'id' => 'studentAttendance'.$row->id, 'value' => $studentattcount)
+        );
         $table .= html_writer::tag('span', number_format($percentage, 2).' %',
                 array('id' => 'percentage'.$row->id)
         );
@@ -123,7 +124,8 @@ function block_sieattendance_print_attendance_table_by_user($courseid, $userid) 
                     $courseid.'&date='.$date->timedate;
             $table .= html_writer::start_tag('td');
             $table .= html_writer::tag('a', block_sieattendance_format_int_timedate($date->timedate),
-                    array('href' => $linktodateatt));
+                    array('href' => $linktodateatt)
+            );
             $table .= html_writer::end_tag('td');
             $table .= html_writer::end_tag('tr');
         }
@@ -153,15 +155,18 @@ function block_sieattendance_print_dates_attendance($courseid) {
         $table .= html_writer::start_tag('tr');
         $table .= html_writer::tag('th', get_string('dates', 'block_sieattendance'));
         $table .= html_writer::tag('th',
-                block_sieattendance_get_course_rolename(5, $courseid, 'countusers'));
+                block_sieattendance_get_course_rolename(5, $courseid, 'countusers')
+        );
         $table .= html_writer::tag('th',
-                block_sieattendance_get_course_rolename(3, $courseid, 'teacher'));
+                block_sieattendance_get_course_rolename(3, $courseid, 'teacher')
+        );
         $table .= html_writer::end_tag('tr');
         foreach ($results as $result) {
             $table .= html_writer::start_tag('tr');
             $table .= html_writer::start_tag('td');
             $table .= html_writer::tag('a', block_sieattendance_format_int_timedate($result->date),
-                    array('href' => '?date='.$result->date.'&courseid='.$courseid));
+                    array('href' => '?date='.$result->date.'&courseid='.$courseid)
+            );
             $table .= html_writer::end_tag('td');
             $table .= html_writer::tag('td', $result->count);
             $table .= html_writer::tag('td', $result->fullname);
@@ -270,7 +275,8 @@ function block_sieattendance_add_course_grade_category($courseid) {
 function block_sieattendance_get_course_grade_category ($courseid) {
     global $DB;
     $firstgradecategory = $DB->get_record_sql("SELECT MIN(id) AS id FROM {grade_categories} WHERE courseid = :courseid",
-            array('courseid' => $courseid));
+            array('courseid' => $courseid)
+    );
     if (!$firstgradecategory->id) {
         $firstgradecategory = block_sieattendance_add_course_grade_category($courseid);
         if ($firstgradecategory) {
@@ -336,7 +342,8 @@ function block_sieattendance_add_attendance_grade_item($courseid) {
     $sortorder = $DB->get_field_sql('SELECT MAX(sortorder) AS sortorder FROM {grade_items}',
             array(
                 'categoryid' => $gradecategory->id,
-                'courseid'   => $courseid));
+                'courseid'   => $courseid)
+    );
     $gradebookitem = new stdClass();
     try {
         // Initialization of a grade item object.
@@ -382,7 +389,8 @@ function block_sieattendance_get_attendance_grade_item($courseid) {
     // TEST $gradecategory = block_sieattendance_get_course_grade_category($courseid);.
     $gradebookitem = $DB->get_record('grade_items', array(
         'courseid' => $courseid,
-        'itemname' => BLOCK_SIEATTENDANCE_GRADEBOOK_ITEM_NAME));
+        'itemname' => BLOCK_SIEATTENDANCE_GRADEBOOK_ITEM_NAME)
+    );
     if (!$gradebookitem) {
         $gradebookitem = block_sieattendance_add_attendance_grade_item($courseid);
     }
@@ -465,11 +473,11 @@ function block_sieattendance_update_attendance_users_grades($courseid, $gradeite
                          AND cx.instanceid = c.id
                          AND r.roleid = 5
                          AND cx.contextlevel = 50
-                         AND c.id = {$courseid}
+                         AND c.id = :courseid
                    ORDER by lastname, firstname";
-        $users = $DB->get_records_sql($query);
-        $totalattendance = $DB->count_records_select('sieattendance', 'courseid = :courseid', array('courseid' => $courseid),
-                'COUNT(DISTINCT(timedate))');
+        $params = array('courseid' => $courseid);
+        $users = $DB->get_recordset_sql($query, $params);        
+        $totalattendance = $DB->count_records_select('sieattendance', 'courseid = :courseid', $params, 'COUNT(DISTINCT(timedate))');
         foreach ($users as $user) {
             $studentattendance = $user->studentattendance;
             $percentage = 0;

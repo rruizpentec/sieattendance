@@ -15,7 +15,6 @@ env:
  global:
   - MOODLE_BRANCH=MOODLE_31_STABLE
  matrix:
-  - DB=pgsql
   - DB=mysqli
 
 before_install:
