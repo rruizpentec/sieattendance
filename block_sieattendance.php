@@ -90,7 +90,7 @@ class block_sieattendance extends block_base {
 
         $filter = "teacherid = userid AND timedate = ".$today." AND courseid = ".$COURSE->id;
         $callroll = $DB->count_records_select('sieattendance', $filter, null, "COUNT('id')");
-        $out = '<script language="javascript">var block_sieattendance_userid = '.$USER->id.'</script>';
+        $out = '<script language="javascript">block_sieattendance_userid = '.$USER->id.'</script>';
         if ($callroll == 0) { // Not attended today, then show a button.
             $onclickcode = "block_sieattendance_toggle_sie_user_attendance('setAttendance', ".
                     $COURSE->id.", ".$USER->id.", ".$today.")";

@@ -35,7 +35,7 @@ function block_sieattendance_print_attendance_table($courseid, $date) {
     $table = '';
     $context = context_course::instance($courseid);
     $query = "SELECT u.id AS id, u.lastname, u.firstname, att.id AS attid,
-                     (SELECT COUNT(DISTINCT(timedate)) as count 
+                     (SELECT COUNT(DISTINCT(timedate)) as count
                         FROM {sieattendance} useratt
                        WHERE useratt.courseid = att.courseid AND u.id = useratt.userid) as studentattcount
                 FROM {role_assignments} a, {user} u
@@ -64,7 +64,6 @@ function block_sieattendance_print_attendance_table($courseid, $date) {
             $value = 'ok';
         }
         $studentattcount = $row->$studentattcount;
-        
         $percentage = 0.0 + (($studentattcount * 100) / $totalattendances);
         $table .= html_writer::start_tag('tr');
         $fullname = $row->lastname.', '.$row->firstname;

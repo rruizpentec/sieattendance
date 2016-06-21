@@ -61,7 +61,7 @@ echo $OUTPUT->header();
 $courseid = required_param('courseid', PARAM_INT);
 $date = optional_param('date', null, PARAM_TEXT);
 $userid = optional_param('userid', null, PARAM_INT);
-$out = '<script language="javascript">var block_sieattendance_userid = '.$USER->id.'</script>';
+$out = '<script language="javascript">block_sieattendance_userid = '.$USER->id.'</script>';
 if (isset($date)) {
     $out .= html_writer::start_tag('p');
     $out .= html_writer::tag('b', get_string('attendanceson', 'block_sieattendance')).
