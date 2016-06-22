@@ -109,7 +109,7 @@ function block_sieattendance_print_attendance_table($courseid, $date) {
 function block_sieattendance_print_attendance_table_by_user($courseid, $userid) {
     global $DB, $CFG;
     $table = '';
-    $results = $DB->get_records_select('sieattendance', 'userid = :userid', array('userid' => $userid),
+    $results = $DB->get_recordset_select('sieattendance', 'userid = :userid', array('userid' => $userid),
             'timedate ASC', 'DISTINCT(timedate)');
     if (count($results) == 0) {
         $table .= html_writer::tag('span', get_string('noresults', 'block_sieattendance'));
@@ -186,27 +186,20 @@ function block_sieattendance_print_dates_attendance($courseid) {
  */
 function block_sieattendance_get_course_rolename($roleid, $courseid, $defaulttransname) {
     global $DB;
-    $sesvarname = 'block_sieattendance_course'.$courseid.'_rolename_'.$roleid;
-    if (!defined($sesvarname)) {
-        $query = "SELECT RN.roleid AS roleid, RN.name AS rolename
-                    FROM {course} C
-              INNER JOIN {context} CX ON C.id = CX.instanceid AND CX.contextlevel = '50'
-              INNER JOIN {role_assignments} RA ON CX.id = RA.contextid
-              INNER JOIN {role} R ON RA.roleid = R.id
-              INNER JOIN {role_names} RN ON RN.roleid = R.id
-              INNER JOIN {user} U ON RA.userid = U.id
-                   WHERE R.id = :roleid
-                         AND C.id =  :courseid
-                GROUP BY R.id";
-        $params = array('roleid' => $roleid, 'courseid' => $courseid);
-        $roles = $DB->get_record_sql($query, $params);
-        if ($roles) {
-            define($sesvarname, $roles->rolename);
-        } else {
-            define($sesvarname, get_string($defaulttransname, 'block_sieattendance'));
-        }
+    $context = context_course::instance($courseid);
+    $query = "SELECT RN.roleid AS roleid, RN.name AS rolename
+                FROM {role_assignments} RA
+          INNER JOIN {role_names} RN ON RA.roleid = RN.roleid
+               WHERE RN.roleid = :roleid
+                     AND RA.contextid = :contextid
+            GROUP BY RN.roleid";
+    $params = array('roleid' => $roleid, 'contextid' => $context->id);
+    $roles = $DB->get_record_sql($query, $params);
+    if ($roles) {
+        return $roles->rolename;
+    } else {
+        return get_string($defaulttransname, 'block_sieattendance');
     }
-    return ${$sesvarname};
 }
 
 /**
