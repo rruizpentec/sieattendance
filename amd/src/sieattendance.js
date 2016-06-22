@@ -30,6 +30,8 @@ define(['jquery'], function($) {
      * @alias module:block_sieattendance/sieattendance
      */
 
+    var block_sieattendance_userid = -1;
+
     /**
      * Updates user attendance data inside the block
      *
@@ -37,9 +39,7 @@ define(['jquery'], function($) {
      * @param status Status flag for user attendance
      * @param increment The amount of attendance to increment
      */
-    function update_user_attendance_data1 (aluid, status, increment) {
-        console.log('update_user_attendance_data');
-        /*
+    function update_user_attendance_data (aluid, status, increment) {
         $('#block_sieattendance_toggleUserAttendance' + aluid)
             .attr('src', M.cfg.wwwroot + '/blocks/sieattendance/pix/' + status + '.png')
             .attr('value', status);
@@ -48,7 +48,6 @@ define(['jquery'], function($) {
         var courseAttendance = parseInt($('#courseCountAttendance').val());
         var assistPercentage = (((userAttendance + increment) * 100) / courseAttendance);
         $('#percentage' + aluid).text((assistPercentage).toFixed(2) + ' %');
-        */
     }
 
     /**
@@ -58,9 +57,7 @@ define(['jquery'], function($) {
      * @param int $aluid User id
      * @param $attdate Attendance date
      */
-    function toggle_sie_user_attendance1 (action, courseid, aluid, attdate) {
-        console.log('toggle_sie_user_attendance');
-        /*
+    function toggle_sie_user_attendance (action, courseid, aluid, attdate) {
         $.ajax({
             url: M.cfg.wwwroot + '/blocks/sieattendance/requests.php',
             type: 'POST',
@@ -79,14 +76,16 @@ define(['jquery'], function($) {
                         }
                     }
                     return;
-                } catch(ex) { }
+                } catch(ex) {
+                    // Debug: console.log(response);.
+                }
             },
-            error: function(jqXHR, description) {
+            error: function() {
                 // Debug: console.log('block_sieattendance_set_user_attendance: ' + description + ' ' + jqXHR.responseText);.
-                var err = eval('(' + jqXHR.responseText + ')');
+                // Debug: var err = eval('(' + jqXHR.responseText + ')');.
                 // Debug: console.log(err.Message);.
             }
-        });*/
+        });
     }
 
     /**
@@ -96,23 +95,20 @@ define(['jquery'], function($) {
      * @param int $aluid User id
      * @param $attdate Attendance date
      */
-    function toggle_user_attendance1 (courseid, aluid, attdate) {
-        console.log('toggle_user_attendance');
-        /*
+    function toggle_user_attendance (courseid, aluid, attdate) {
         var action = 'setAttendance';
         if ($('#block_sieattendance_toggleUserAttendance' + aluid).attr('value') == 'ok') {
             action = 'delAttendance';
         }
         toggle_sie_user_attendance(action, courseid, aluid, attdate);
-        */
     }
 
     return {
-        toggle_sie_user_attendance: function () {
-            alert('olakease1');
-        },
-        toggle_user_attendance: function () {
-            alert('olakease2');
+        toggle_sie_user_attendance: toggle_sie_user_attendance,
+        toggle_user_attendance: toggle_user_attendance,
+        init: function (userid) {
+            // Do nothing.
+            block_sieattendance_userid = userid;
         }
     };
 });
