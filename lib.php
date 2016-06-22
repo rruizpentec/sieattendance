@@ -187,7 +187,7 @@ function block_sieattendance_print_dates_attendance($courseid) {
 function block_sieattendance_get_course_rolename($roleid, $courseid, $defaulttransname) {
     global $DB;
     $sesvarname = 'block_sieattendance_course'.$courseid.'_rolename_'.$roleid;
-    if (!isset($_COOKIE[$sesvarname])) {
+    if (!defined($sesvarname)) {
         $query = "SELECT RN.roleid AS roleid, RN.name AS rolename
                     FROM {course} C
               INNER JOIN {context} CX ON C.id = CX.instanceid AND CX.contextlevel = '50'
@@ -201,12 +201,12 @@ function block_sieattendance_get_course_rolename($roleid, $courseid, $defaulttra
         $params = array('roleid' => $roleid, 'courseid' => $courseid);
         $roles = $DB->get_record_sql($query, $params);
         if ($roles) {
-            $_COOKIE[$sesvarname] = $roles->rolename;
+            define($sesvarname, $roles->rolename);
         } else {
-            $_COOKIE[$sesvarname] = get_string($defaulttransname, 'block_sieattendance');
+            define($sesvarname, get_string($defaulttransname, 'block_sieattendance'));
         }
     }
-    return $_COOKIE[$sesvarname];
+    return ${$sesvarname};
 }
 
 /**
