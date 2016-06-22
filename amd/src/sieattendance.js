@@ -29,7 +29,7 @@ define(['jquery'], function($) {
      * @constructor
      * @alias module:block_sieattendance/sieattendance
      */
-    
+
     /**
      * Updates user attendance data inside the block
      *
@@ -50,8 +50,7 @@ define(['jquery'], function($) {
         $('#percentage' + aluid).text((assistPercentage).toFixed(2) + ' %');
         */
     }
-    
-    
+
     /**
      * Toggle user attendance information on SAMIE platform
      *
@@ -89,7 +88,7 @@ define(['jquery'], function($) {
             }
         });*/
     }
-    
+
     /**
      * Toggle user attendance information
      *
@@ -107,7 +106,7 @@ define(['jquery'], function($) {
         toggle_sie_user_attendance(action, courseid, aluid, attdate);
         */
     }
-    
+
     return {
         toggle_sie_user_attendance: function () {
             alert('olakease1');
