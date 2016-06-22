@@ -31,7 +31,7 @@ define(['jquery'], function($) {
      */
 
     var block_sieattendance_userid = -1;
-    
+
     /**
      * Updates user attendance data inside the block
      *
@@ -74,15 +74,13 @@ define(['jquery'], function($) {
                             var status = (action == 'setAttendance' ? 'ok' : 'fail');
                             update_user_attendance_data(aluid, status, increment);
                         }
-                    } else {
-                        // Debug: console.log(response);.
                     }
                     return;
                 } catch(ex) {
                     // Debug: console.log(response);.
                 }
             },
-            error: function(jqXHR, description) {
+            error: function() {
                 // Debug: console.log('block_sieattendance_set_user_attendance: ' + description + ' ' + jqXHR.responseText);.
                 // Debug: var err = eval('(' + jqXHR.responseText + ')');.
                 // Debug: console.log(err.Message);.

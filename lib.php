@@ -77,8 +77,8 @@ function block_sieattendance_print_attendance_table($courseid, $date) {
         $table .= html_writer::empty_tag('img',
                 array('id'    => 'block_sieattendance_toggleUserAttendance'.$row->id,
                     'class'   => 'block_sieattendance_toggleUserAttendance',
-                    'onclick' => "(function() { 
-                        require('block_sieattendance/sieattendance').toggle_user_attendance(".$courseid.",".$row->id.",".$date.") 
+                    'onclick' => "(function() {
+                        require('block_sieattendance/sieattendance').toggle_user_attendance(".$courseid.",".$row->id.",".$date.")
                     })();",
                     'value'   => $value,
                     'src'     => $statusimgurl)

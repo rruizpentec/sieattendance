@@ -92,7 +92,8 @@ class block_sieattendance extends block_base {
         $callroll = $DB->count_records_select('sieattendance', $filter, null, "COUNT('id')");
         if ($callroll == 0) { // Not attended today, then show a button.
             $onclickcode = "(function() {
-                require('block_sieattendance/sieattendance').toggle_sie_user_attendance('setAttendance', ".$COURSE->id.", ".$USER->id.", ".$today.")
+                require('block_sieattendance/sieattendance')
+                    .toggle_sie_user_attendance('setAttendance', ".$COURSE->id.", ".$USER->id.", ".$today.")
             })();";
             $out .= html_writer::tag('span', get_string('callroll', 'block_sieattendance'),
                     array(
