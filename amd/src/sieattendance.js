@@ -25,11 +25,6 @@
  * @module block_sieattendance/sieattendance
  */
 define(['jquery'], function($) {
-    /**
-     * @constructor
-     * @alias module:block_sieattendance/sieattendance
-     */
-
     var block_sieattendance_userid = -1;
 
     /**
