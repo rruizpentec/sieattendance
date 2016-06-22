@@ -40,7 +40,7 @@ function block_sieattendance_print_attendance_table($courseid, $date) {
                        WHERE useratt.courseid = att.courseid AND u.id = useratt.userid) as studentattcount
                 FROM {role_assignments} a, {user} u
            LEFT JOIN {sieattendance} att ON att.userid = u.id AND att.courseid = :courseid
-                     AND att.timedate = :date
+                     AND att.timedate = :timedate
                WHERE contextid = :contextid
                      AND roleid = 5
                      AND a.userid = u.id
@@ -63,7 +63,7 @@ function block_sieattendance_print_attendance_table($courseid, $date) {
             $statusimgurl = $CFG->wwwroot.'/blocks/sieattendance/pix/ok.png';
             $value = 'ok';
         }
-        $studentattcount = $row->$studentattcount;
+        $studentattcount = $row->studentattcount;
         $percentage = 0.0 + (($studentattcount * 100) / $totalattendances);
         $table .= html_writer::start_tag('tr');
         $fullname = $row->lastname.', '.$row->firstname;
@@ -75,9 +75,11 @@ function block_sieattendance_print_attendance_table($courseid, $date) {
         $table .= html_writer::end_tag('td');
         $table .= html_writer::start_tag('td');
         $table .= html_writer::empty_tag('img',
-                array('id'      => 'block_sieattendance_toggleUserAttendance'.$row->id,
+                array('id'    => 'block_sieattendance_toggleUserAttendance'.$row->id,
                     'class'   => 'block_sieattendance_toggleUserAttendance',
-                    'onclick' => "block_sieattendance_toggle_user_attendance(".$courseid.",".$row->id.",".$date.")",
+                    'onclick' => "(function() { 
+                        require('block_sieattendance/sieattendance').toggle_user_attendance(".$courseid.",".$row->id.",".$date.") 
+                    })();",
                     'value'   => $value,
                     'src'     => $statusimgurl)
         );
@@ -143,9 +145,10 @@ function block_sieattendance_print_dates_attendance($courseid) {
                      CONCAT(U.lastname, ' ', U.firstname) AS fullname
                 FROM {sieattendance} att
           INNER JOIN {user} U ON att.teacherid = U.id
-               WHERE att.courseid = {$courseid}
+               WHERE att.courseid = :courseid
             GROUP BY att.timedate, U.id ";
-    $results = $DB->get_records_sql($query);
+    $params = array('courseid' => $courseid);
+    $results = $DB->get_recordset_sql($query, $params);
     if (count($results) == 0) {
         $table .= html_writer::tag('span', get_string('noresults', 'block_sieattendance'));
     } else {
@@ -175,15 +178,6 @@ function block_sieattendance_print_dates_attendance($courseid) {
     return $table;
 }
 
-/** This function include jquery and custom js that allows call roll
- * @return void
- */
-function block_sieattendance_require_javascript() {
-    global $CFG, $PAGE;
-    $PAGE->requires->jquery();
-    $PAGE->requires->js(new moodle_url($CFG->wwwroot.'/blocks/sieattendance/javascript.js'));
-}
-
 /** This function get rolename if a course has custom role name, or put the rolename of language file
  * @param int The role id
  * @param int Course id
@@ -201,10 +195,11 @@ function block_sieattendance_get_course_rolename($roleid, $courseid, $defaulttra
               INNER JOIN {role} R ON RA.roleid = R.id
               INNER JOIN {role_names} RN ON RN.roleid = R.id
               INNER JOIN {user} U ON RA.userid = U.id
-                   WHERE R.id = {$roleid}
-                         AND C.id =  {$courseid}
+                   WHERE R.id = :roleid
+                         AND C.id =  :courseid
                 GROUP BY R.id";
-        $roles = $DB->get_record_sql($query, null);
+        $params = array('roleid' => $roleid, 'courseid' => $courseid);
+        $roles = $DB->get_record_sql($query, $params);
         if ($roles) {
             $_COOKIE[$sesvarname] = $roles->rolename;
         } else {

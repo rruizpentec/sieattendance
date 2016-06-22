@@ -30,8 +30,7 @@ defined('MOODLE_INTERNAL') || die;
 require_once(__DIR__ .'/lib.php');
 global $CFG, $DB, $PAGE, $OUTPUT, $COURSE;
 
-$PAGE->requires->jquery();
-block_sieattendance_require_javascript();
+$PAGE->requires->js_call_amd('block_sieattendance/sieattendance', 'init');
 $context = context_system::instance();
 require_login();
 

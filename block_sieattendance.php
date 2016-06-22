@@ -85,15 +85,16 @@ class block_sieattendance extends block_base {
             return null;
         }
 
-        block_sieattendance_require_javascript();
+        $PAGE->requires->js_call_amd('block_sieattendance/sieattendance', 'init');
         $today = strftime('%Y%m%d', date_timestamp_get(date_create()));
 
         $filter = "teacherid = userid AND timedate = ".$today." AND courseid = ".$COURSE->id;
         $callroll = $DB->count_records_select('sieattendance', $filter, null, "COUNT('id')");
         $out = '<script language="javascript">block_sieattendance_userid = '.$USER->id.'</script>';
         if ($callroll == 0) { // Not attended today, then show a button.
-            $onclickcode = "block_sieattendance_toggle_sie_user_attendance('setAttendance', ".
-                    $COURSE->id.", ".$USER->id.", ".$today.")";
+            $onclickcode = "(function() {
+                require('block_sieattendance/sieattendance').toggle_sie_user_attendance('setAttendance', ".$COURSE->id.", ".$USER->id.", ".$today.")
+            })();";
             $out .= html_writer::tag('span', get_string('callroll', 'block_sieattendance'),
                     array(
                         'onclick' => $onclickcode,
