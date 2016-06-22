@@ -29,6 +29,8 @@ define(['jquery'], function($) {
      * @constructor
      * @alias module:block_sieattendance/sieattendance
      */
+
+    var block_sieattendance_userid = -1;
     
     /**
      * Updates user attendance data inside the block
@@ -47,8 +49,7 @@ define(['jquery'], function($) {
         var assistPercentage = (((userAttendance + increment) * 100) / courseAttendance);
         $('#percentage' + aluid).text((assistPercentage).toFixed(2) + ' %');
     }
-    
-    
+
     /**
      * Toggle user attendance information on SAMIE platform
      *
@@ -76,20 +77,19 @@ define(['jquery'], function($) {
                     } else {
                         // Debug: console.log(response);.
                     }
-                    
                     return;
-                } catch(ex) { 
+                } catch(ex) {
                     // Debug: console.log(response);.
                 }
             },
             error: function(jqXHR, description) {
                 // Debug: console.log('block_sieattendance_set_user_attendance: ' + description + ' ' + jqXHR.responseText);.
-                var err = eval('(' + jqXHR.responseText + ')');
+                // Debug: var err = eval('(' + jqXHR.responseText + ')');.
                 // Debug: console.log(err.Message);.
             }
         });
     }
-    
+
     /**
      * Toggle user attendance information
      *
@@ -104,12 +104,13 @@ define(['jquery'], function($) {
         }
         toggle_sie_user_attendance(action, courseid, aluid, attdate);
     }
-    
+
     return {
         toggle_sie_user_attendance: toggle_sie_user_attendance,
         toggle_user_attendance: toggle_user_attendance,
-        init: function () {
+        init: function (userid) {
             // Do nothing.
+            block_sieattendance_userid = userid;
         }
     };
 });

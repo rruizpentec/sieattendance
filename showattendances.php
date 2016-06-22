@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die;
 require_once(__DIR__ .'/lib.php');
 global $CFG, $DB, $PAGE, $OUTPUT, $COURSE;
 
-$PAGE->requires->js_call_amd('block_sieattendance/sieattendance', 'init');
+$PAGE->requires->js_call_amd('block_sieattendance/sieattendance', 'init', array($USER->id));
 $context = context_system::instance();
 require_login();
 
@@ -60,7 +60,6 @@ echo $OUTPUT->header();
 $courseid = required_param('courseid', PARAM_INT);
 $date = optional_param('date', null, PARAM_TEXT);
 $userid = optional_param('userid', null, PARAM_INT);
-$out = '<script language="javascript">block_sieattendance_userid = '.$USER->id.'</script>';
 if (isset($date)) {
     $out .= html_writer::start_tag('p');
     $out .= html_writer::tag('b', get_string('attendanceson', 'block_sieattendance')).
