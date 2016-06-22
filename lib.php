@@ -123,7 +123,7 @@ function block_sieattendance_print_attendance_table_by_user($courseid, $userid) 
             $linktodateatt = $CFG->wwwroot.'/blocks/sieattendance/showattendances.php?courseid='.
                     $courseid.'&date='.$date->timedate;
             $table .= html_writer::start_tag('td');
-            $table .= html_writer::tag('a', block_sieattendance_format_int_timedate($date->timedate),
+            $table .= html_writer::tag('a', block_sieattendance_format_human_timedate($date->timedate),
                     array('href' => $linktodateatt)
             );
             $table .= html_writer::end_tag('td');
@@ -165,7 +165,7 @@ function block_sieattendance_print_dates_attendance($courseid) {
         foreach ($results as $result) {
             $table .= html_writer::start_tag('tr');
             $table .= html_writer::start_tag('td');
-            $table .= html_writer::tag('a', block_sieattendance_format_int_timedate($result->date),
+            $table .= html_writer::tag('a', block_sieattendance_format_human_timedate($result->date),
                     array('href' => '?date='.$result->date.'&courseid='.$courseid)
             );
             $table .= html_writer::end_tag('td');
@@ -203,12 +203,11 @@ function block_sieattendance_get_course_rolename($roleid, $courseid, $defaulttra
 }
 
 /**
- * Format a timedate integer to a human/machine readable format
+ * Format a timedate integer to a machine readable format
  *
  * @param int  $timedate Value to format
- * @param bool $humanformat Indicates if the result will be in a human readable format or not
  */
-function block_sieattendance_format_int_timedate($timedate, $humanformat = true) {
+function block_sieattendance_format_machine_timedate($timedate) {
     $year = floor($timedate / 10000);
     $month = floor(($timedate % 10000) / 100);
     if ($month < 10) {
@@ -218,7 +217,25 @@ function block_sieattendance_format_int_timedate($timedate, $humanformat = true)
     if ($day < 10) {
         $day = '0'.$day;
     }
-    return ($humanformat ? $day.'-'.$month.'-'.$year : $year.'-'.$month.'-'.$day);
+    return $year.'-'.$month.'-'.$day;
+}
+
+/**
+ * Format a timedate integer to a human readable format
+ *
+ * @param int  $timedate Value to format
+ */
+function block_sieattendance_format_human_timedate($timedate) {
+    $year = floor($timedate / 10000);
+    $month = floor(($timedate % 10000) / 100);
+    if ($month < 10) {
+        $month = '0'.$month;
+    }
+    $day = $timedate % 100;
+    if ($day < 10) {
+        $day = '0'.$day;
+    }
+    return $day.'-'.$month.'-'.$year;
 }
 
 /**

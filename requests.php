@@ -68,7 +68,7 @@ try {
         }
         if ($aluid != $USER->id) {
             $result = file_get_contents($baseurl.'inc/attendancerequests.php?action='. $action. '&alu_id='.
-                    $aluid .'&course_id=' . $courseid . '&asi_fecha=' . block_sieattendance_format_int_timedate($asifecha, false));
+                    $aluid .'&course_id=' . $courseid . '&asi_fecha=' . block_sieattendance_format_machine_timedate($asifecha));
             $result = 'OK';
         } else {
             $result = 'OK';

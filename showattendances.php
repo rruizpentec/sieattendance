@@ -45,7 +45,7 @@ $PAGE->navbar->add(get_string('courseattendances', 'block_sieattendance'),
         new moodle_url($CFG->wwwroot.'/blocks/sieattendance/showattendances.php?courseid='.$courseid));
 if (isset($date)) {
     $PAGE->navbar->add(get_string('attendanceson', 'block_sieattendance').'&nbsp;'.
-            block_sieattendance_format_int_timedate($date), '');
+            block_sieattendance_format_human_timedate($date), '');
 } else if (isset($userid)) {
     $fullname = optional_param('fullname', $userid, PARAM_TEXT);
     $PAGE->navbar->add($fullname, '');
@@ -63,7 +63,7 @@ $userid = optional_param('userid', null, PARAM_INT);
 if (isset($date)) {
     $out .= html_writer::start_tag('p');
     $out .= html_writer::tag('b', get_string('attendanceson', 'block_sieattendance')).
-            block_sieattendance_format_int_timedate($date);
+            block_sieattendance_format_human_timedate($date);
     $out .= html_writer::end_tag('p');
     $out .= block_sieattendance_print_attendance_table($courseid, $date);
 } else if (isset($userid)) {
