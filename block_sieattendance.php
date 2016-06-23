@@ -87,7 +87,7 @@ class block_sieattendance extends block_base {
 
         $PAGE->requires->js_call_amd('block_sieattendance/sieattendance', 'init', array($USER->id));
         $today = strftime('%Y%m%d', date_timestamp_get(date_create()));
-
+        $out = '';
         $filter = "teacherid = userid AND timedate = ".$today." AND courseid = ".$COURSE->id;
         $callroll = $DB->count_records_select('block_sieattendance_attendance', $filter, null, "COUNT('id')");
         if ($callroll == 0) { // Not attended today, then show a button.
