@@ -36,10 +36,10 @@ function block_sieattendance_print_attendance_table($courseid, $date) {
     $context = context_course::instance($courseid);
     $query = "SELECT u.id AS id, u.lastname, u.firstname, att.id AS attid,
                      (SELECT COUNT(DISTINCT(timedate)) as count
-                        FROM {sieattendance} useratt
+                        FROM {block_sieattendance_attendance} useratt
                        WHERE useratt.courseid = att.courseid AND u.id = useratt.userid) as studentattcount
                 FROM {role_assignments} a, {user} u
-           LEFT JOIN {sieattendance} att ON att.userid = u.id AND att.courseid = :courseid
+           LEFT JOIN {block_sieattendance_attendance} att ON att.userid = u.id AND att.courseid = :courseid
                      AND att.timedate = :timedate
                WHERE contextid = :contextid
                      AND roleid = 5
@@ -143,7 +143,7 @@ function block_sieattendance_print_dates_attendance($courseid) {
     $table = '';
     $query = "SELECT att.timedate AS date, SUM(CASE WHEN userid = teacherid THEN 0 ELSE 1 END) AS count,
                      CONCAT(U.lastname, ' ', U.firstname) AS fullname
-                FROM {sieattendance} att
+                FROM {block_sieattendance_attendance} att
           INNER JOIN {user} U ON att.teacherid = U.id
                WHERE att.courseid = :courseid
             GROUP BY att.timedate, U.id ";
@@ -466,7 +466,7 @@ function block_sieattendance_update_attendance_users_grades($courseid, $gradeite
     $result = true;
     try {
         $subquery = "SELECT COUNT(DISTINCT(timedate))
-                       FROM {sieattendance} att
+                       FROM {block_sieattendance_attendance} att
                       WHERE c.id = att.courseid
                             AND u.id = att.userid ";
         $query = "SELECT u.id AS id, (".$subquery.") AS studentattendance
