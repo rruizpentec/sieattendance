@@ -46,9 +46,9 @@ try {
             $record->timedate = $asifecha;
             $record->teacherid = $USER->id;
             try {
-                $DB->insert_record('sieattendance', $record);
+                $DB->insert_record('block_sieattendance_attendance', $record);
             } catch (Exception $ex) {
-                $attendanceexists = $DB->record_exists('sieattendance',
+                $attendanceexists = $DB->record_exists('block_sieattendance_attendance',
                         array('courseid' => $courseid, 'userid' => $aluid, 'timedate' => $asifecha));
                 if (!$attendanceexists) {
                     $result = 'fail';
@@ -56,7 +56,7 @@ try {
                 }
             }
         } else if ($action == 'delAttendance') {
-            $DB->delete_records('sieattendance', array(
+            $DB->delete_records('block_sieattendance_attendance', array(
                 'timedate' => $asifecha,
                 'userid'   => $aluid,
                 'courseid' => $courseid));

@@ -89,7 +89,7 @@ class block_sieattendance extends block_base {
         $today = strftime('%Y%m%d', date_timestamp_get(date_create()));
 
         $filter = "teacherid = userid AND timedate = ".$today." AND courseid = ".$COURSE->id;
-        $callroll = $DB->count_records_select('sieattendance', $filter, null, "COUNT('id')");
+        $callroll = $DB->count_records_select('block_sieattendance_attendance', $filter, null, "COUNT('id')");
         if ($callroll == 0) { // Not attended today, then show a button.
             $onclickcode = "(function() {
                 require('block_sieattendance/sieattendance')

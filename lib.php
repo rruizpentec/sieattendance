@@ -53,7 +53,7 @@ function block_sieattendance_print_attendance_table($courseid, $date) {
     $table .= html_writer::end_tag('tr');
     $params = array('timedate' => $date, 'contextid' => $context->id, 'courseid' => $courseid);
     $rows = $DB->get_recordset_sql($query, $params);
-    $totalattendances = $DB->count_records_select('sieattendance', 'courseid = :courseid',
+    $totalattendances = $DB->count_records_select('block_sieattendance_attendance', 'courseid = :courseid',
             array('courseid' => $courseid), 'COUNT(DISTINCT(timedate)) as count');
     foreach ($rows as $row) {
         if ($row->attid == '') {
@@ -109,7 +109,7 @@ function block_sieattendance_print_attendance_table($courseid, $date) {
 function block_sieattendance_print_attendance_table_by_user($courseid, $userid) {
     global $DB, $CFG;
     $table = '';
-    $results = $DB->get_recordset_select('sieattendance', 'userid = :userid', array('userid' => $userid),
+    $results = $DB->get_recordset_select('block_sieattendance_attendance', 'userid = :userid', array('userid' => $userid),
             'timedate ASC', 'DISTINCT(timedate)');
     if (count($results) == 0) {
         $table .= html_writer::tag('span', get_string('noresults', 'block_sieattendance'));
@@ -480,7 +480,7 @@ function block_sieattendance_update_attendance_users_grades($courseid, $gradeite
                    ORDER by lastname, firstname";
         $params = array('courseid' => $courseid);
         $users = $DB->get_recordset_sql($query, $params);
-        $totalattendance = $DB->count_records_select('sieattendance', 'courseid = :courseid', $params, 'COUNT(DISTINCT(timedate))');
+        $totalattendance = $DB->count_records_select('block_sieattendance_attendance', 'courseid = :courseid', $params, 'COUNT(DISTINCT(timedate))');
         foreach ($users as $user) {
             $studentattendance = $user->studentattendance;
             $percentage = 0;
